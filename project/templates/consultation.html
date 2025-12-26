@@ -1,0 +1,324 @@
+<!--
+[filename].html - [description]
+
+AI Assistance Disclosure:
+This project was started during Week 6 of CS50 and developed over approximately
+two months. I used AI tools (Claude / Gemini) as a support resource during
+development.
+
+All code was either written by me or reviewed, adapted, and implemented by me.
+
+-->
+{% extends "layout.html" %}
+
+{% block title %}Consultation #{{ consultation.id }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+        .consultation-header {
+            background: white !important;
+            color: black !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="container my-4">
+    <!-- Header -->
+    <div class="row mb-4 no-print">
+        <div class="col-md-12">
+            <a href="/history" class="btn btn-outline-secondary mb-3">
+                <i class="fas fa-arrow-left"></i>
+                Back to History
+            </a>
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>
+                    <i class="fas fa-file-medical text-primary"></i>
+                    Consultation #{{ consultation.id }}
+                </h2>
+                <div>
+                    <button onclick="window.print()" class="btn btn-secondary">
+                        <i class="fas fa-print"></i>
+                        Print
+                    </button>
+                    <a href="/export/{{ consultation.id }}" class="btn btn-primary">
+                        <i class="fas fa-download"></i>
+                        Export JSON
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Consultation Card -->
+    <div class="card shadow-lg">
+        <!-- Header Info -->
+        <div class="card-header consultation-header" style="background: linear-gradient(135deg, var(--primary-color) 0%, #0a58ca 100%); color: white;">
+            <div class="row">
+                <div class="col-md-8">
+                    <h4 class="mb-2">
+                        <i class="fas fa-stethoscope"></i>
+                        Diagnostic Consultation Report
+                    </h4>
+                    <p class="mb-1">
+                        <strong>Date:</strong> {{ consultation.timestamp_formatted }}
+                    </p>
+                    <p class="mb-0">
+                        <strong>Session ID:</strong> {{ consultation.session_id or 'N/A' }}
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <span class="badge confidence-{{ consultation.confidence_level }}"
+                          style="font-size: 1rem; padding: 0.5rem 1rem;">
+                        {{ consultation.confidence_level }} CONFIDENCE
+                    </span>
+                    {% if consultation.is_urgent %}
+                    <br>
+                    <span class="badge bg-danger mt-2" style="font-size: 0.9rem;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        URGENT
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            <!-- Clinical Query -->
+            <div class="mb-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-comment-medical text-primary"></i>
+                    Clinical Query
+                </h5>
+                <div class="alert alert-light border">
+                    <p class="mb-0" style="font-size: 1.05rem; line-height: 1.8;">
+                        {{ consultation.query }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Symptoms Detected -->
+            {% if consultation.symptoms_detected %}
+            <div class="mb-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-check-circle text-success"></i>
+                    Symptoms Detected
+                </h5>
+                <div class="symptoms-detected">
+                    {% set symptoms_list = consultation.symptoms_detected|from_json %}
+                    {% for symptom in symptoms_list %}
+                    <span class="symptom-tag">{{ symptom }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Primary Diagnosis -->
+            <div class="mb-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-diagnoses text-danger"></i>
+                    Primary Diagnosis
+                </h5>
+                <div class="alert alert-primary" style="border-left: 5px solid var(--primary-color);">
+                    <h3 class="mb-3">{{ consultation.top_diagnosis }}</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-0">
+                                <strong>Probability:</strong>
+                                <span class="text-primary" style="font-size: 1.2rem;">
+                                    {{ (consultation.confidence_score * 100)|round(1) }}%
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-0">
+                                <strong>Confidence Level:</strong>
+                                <span class="badge confidence-{{ consultation.confidence_level }}">
+                                    {{ consultation.confidence_level }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Differential Diagnosis -->
+            {% if consultation.differential %}
+            <div class="mb-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-list-ol text-info"></i>
+                    Differential Diagnosis
+                </h5>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
+                        <thead class="table-primary">
+                            <tr>
+                                <th style="width: 10%">Rank</th>
+                                <th style="width: 40%">Disease</th>
+                                <th style="width: 15%">Probability</th>
+                                <th style="width: 15%">Confidence</th>
+                                <th style="width: 20%">Match Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in consultation.differential %}
+                            <tr>
+                                <td class="text-center">
+                                    <span class="badge bg-secondary">{{ loop.index }}</span>
+                                </td>
+                                <td>
+                                    <strong>{{ item.disease }}</strong>
+                                    {% if item.supporting_symptoms %}
+                                    <br>
+                                    <small class="text-muted">
+                                        Key: {{ item.supporting_symptoms[:3]|join(', ') }}
+                                    </small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="progress" style="height: 25px;">
+                                        <div class="progress-bar"
+                                             role="progressbar"
+                                             style="width: {{ item.probability_pct }}"
+                                             aria-valuenow="{{ item.probability * 100 }}"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100">
+                                            {{ item.probability_pct }}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge confidence-{{ item.confidence }}">
+                                        {{ item.confidence }}
+                                    </span>
+                                </td>
+                                <td class="small">
+                                    {% if item.get('symptom_match_scores') %}
+                                    {% for symptom, score in item.symptom_match_scores %}
+                                    <div>{{ symptom }}: {{ (score * 100)|round }}%</div>
+                                    {% endfor %}
+                                    {% else %}
+                                    N/A
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Clinical Recommendations -->
+            {% if consultation.response_data.get('recommendations') %}
+            <div class="mb-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-clipboard-check text-warning"></i>
+                    Clinical Recommendations
+                </h5>
+                <div class="recommendations-section">
+                    {% for rec in consultation.response_data.recommendations %}
+                    <div class="recommendation-item">
+                        {{ rec }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Warnings -->
+            {% if consultation.response_data.get('warnings') %}
+            <div class="mb-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-exclamation-triangle text-danger"></i>
+                    Clinical Warnings
+                </h5>
+                <div class="alert alert-warning">
+                    {% for warning in consultation.response_data.warnings %}
+                    <div class="mb-2">{{ warning }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Clinical Notes Section -->
+            <div class="mb-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-notes-medical text-secondary"></i>
+                    Important Notes
+                </h5>
+                <div class="alert alert-info">
+                    <ul class="mb-0">
+                        <li>This report is generated by an AI-based Clinical Decision Support System</li>
+                        <li>All diagnoses must be verified by qualified healthcare professionals</li>
+                        <li>Clinical correlation and additional testing may be required</li>
+                        <li>This is not a substitute for professional medical judgment</li>
+                        {% if consultation.is_urgent %}
+                        <li><strong>URGENT: This case requires immediate clinical evaluation</strong></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Metadata -->
+            <div class="row mt-4 pt-4 border-top">
+                <div class="col-md-6">
+                    <h6 class="text-muted">System Information</h6>
+                    <p class="small mb-1">
+                        <strong>Consultation ID:</strong> {{ consultation.id }}
+                    </p>
+                    <p class="small mb-1">
+                        <strong>User ID:</strong> {{ consultation.user_id }}
+                    </p>
+                    <p class="small mb-1">
+                        <strong>Consultation Type:</strong>
+                        {{ consultation.consultation_type|default('diagnostic')|title }}
+                    </p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <h6 class="text-muted">Performance Metrics</h6>
+                    <p class="small mb-1">
+                        <strong>Symptoms Analyzed:</strong>
+                        {{ consultation.response_data.get('symptoms_detected', 0) }}
+                    </p>
+                    <p class="small mb-1">
+                        <strong>Differential Count:</strong>
+                        {{ consultation.differential|length if consultation.differential else 0 }}
+                    </p>
+                    <p class="small mb-1">
+                        <strong>Confidence Score:</strong>
+                        {{ (consultation.confidence_score * 100)|round(2) }}%
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer text-center text-muted small">
+            <p class="mb-0">
+                <i class="fas fa-shield-alt"></i>
+                This consultation is stored securely and complies with data protection regulations
+            </p>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mt-4 no-print">
+        <div class="col-md-12 text-center">
+            <a href="/chat" class="btn btn-primary btn-lg me-2">
+                <i class="fas fa-plus"></i>
+                New Consultation
+            </a>
+            <a href="/history" class="btn btn-outline-secondary btn-lg">
+                <i class="fas fa-history"></i>
+                View All History
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,176 @@
+<!--
+[filename].html - [description]
+
+AI Assistance Disclosure:
+This project was started during Week 6 of CS50 and developed over approximately
+two months. I used AI tools (Claude / Gemini) as a support resource during
+development.
+
+All code was either written by me or reviewed, adapted, and implemented by me.
+
+-->
+html{% extends "layout.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block main %}
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-3 fw-bold mb-4">
+                    <i class="fas fa-heartbeat text-primary"></i>
+                    Clinical Decision Support System
+                </h1>
+                <p class="lead mb-4">
+                    AI-powered diagnostic assistant for healthcare professionals.
+                    95.4% accuracy across 41 diseases and 132 symptoms.
+                </p>
+                <div class="d-grid gap-2 d-md-flex">
+                    <a href="/login" class="btn btn-primary btn-lg px-4 me-md-2">
+                        <i class="fas fa-sign-in-alt"></i> Get Started
+                    </a>
+                    <a href="/register" class="btn btn-outline-primary btn-lg px-4">
+                        <i class="fas fa-user-plus"></i> Register
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-5">
+                        <h3 class="card-title mb-4">
+                            <i class="fas fa-chart-line text-success"></i>
+                            System Performance
+                        </h3>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Top-1 Accuracy</span>
+                                <span class="fw-bold">95.4%</span>
+                            </div>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar bg-success" style="width: 95.4%">95.4%</div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Top-3 Accuracy</span>
+                                <span class="fw-bold">99.6%</span>
+                            </div>
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar bg-info" style="width: 99.6%">99.6%</div>
+                            </div>
+                        </div>
+                        <div class="row text-center mt-4">
+                            <div class="col-4">
+                                <h2 class="text-primary">41</h2>
+                                <small class="text-muted">Diseases</small>
+                            </div>
+                            <div class="col-4">
+                                <h2 class="text-success">132</h2>
+                                <small class="text-muted">Symptoms</small>
+                            </div>
+                            <div class="col-4">
+                                <h2 class="text-info">4920</h2>
+                                <small class="text-muted">Training Cases</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 text-center border-0 shadow">
+                <div class="card-body">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-brain fa-3x text-primary"></i>
+                    </div>
+                    <h4 class="card-title">AI-Powered Diagnosis</h4>
+                    <p class="card-text">
+                        Advanced Bayesian inference engine trained on thousands of clinical cases.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 text-center border-0 shadow">
+                <div class="card-body">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-shield-alt fa-3x text-success"></i>
+                    </div>
+                    <h4 class="card-title">Clinically Validated</h4>
+                    <p class="card-text">
+                        Rigorously tested and validated for accuracy and reliability.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 text-center border-0 shadow">
+                <div class="card-body">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-lock fa-3x text-danger"></i>
+                    </div>
+                    <h4 class="card-title">Secure & Private</h4>
+                    <p class="card-text">
+                        HIPAA-compliant design with full audit trails and data protection.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-light py-5 my-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 mx-auto text-center">
+                <h2 class="mb-4">How It Works</h2>
+                <div class="row g-4">
+                    <div class="col-md-3">
+                        <div class="step-number">1</div>
+                        <p><strong>Enter Symptoms</strong></p>
+                        <p class="small text-muted">Describe patient presentation</p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="step-number">2</div>
+                        <p><strong>AI Analysis</strong></p>
+                        <p class="small text-muted">Engine processes symptoms</p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="step-number">3</div>
+                        <p><strong>Get Differential</strong></p>
+                        <p class="small text-muted">Ranked diagnosis list</p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="step-number">4</div>
+                        <p><strong>Clinical Decision</strong></p>
+                        <p class="small text-muted">Your expert judgment</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="card border-warning bg-warning bg-opacity-10">
+        <div class="card-body">
+            <h5 class="card-title">
+                <i class="fas fa-exclamation-triangle text-warning"></i>
+                Important Notice
+            </h5>
+            <p class="card-text mb-0">
+                This system is a <strong>Clinical Decision Support Tool</strong>.
+                It provides diagnostic suggestions based on symptom patterns but is
+                <strong>NOT a substitute for professional medical judgment</strong>.
+                All diagnoses must be verified by qualified healthcare professionals.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

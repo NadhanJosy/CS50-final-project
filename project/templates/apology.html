@@ -1,0 +1,40 @@
+<!--
+[filename].html - [description]
+
+AI Assistance Disclosure:
+This project was started during Week 6 of CS50 and developed over approximately
+two months. I used AI tools (Claude / Gemini) as a support resource during
+development.
+
+All code was either written by me or reviewed, adapted, and implemented by me.
+
+-->
+{% extends "layout.html" %}
+
+{% block title %}Error{% endblock %}
+
+{% block main %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card shadow-lg border-danger">
+                <div class="card-body text-center p-5">
+                    <i class="fas fa-exclamation-triangle fa-5x text-danger mb-4"></i>
+                    <h2 class="mb-3">Oops! {{ code }}</h2>
+                    <p class="lead mb-4">{{ message }}</p>
+                    <div>
+                        <a href="/" class="btn btn-primary me-2">
+                            <i class="fas fa-home"></i>
+                            Go Home
+                        </a>
+                        <a href="/chat" class="btn btn-outline-primary">
+                            <i class="fas fa-stethoscope"></i>
+                            Start Diagnosis
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

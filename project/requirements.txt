@@ -1,0 +1,26 @@
+# Core Flask dependencies
+Flask==2.3.0
+Flask-Session==0.5.0
+cs50==9.2.5
+Werkzeug==2.3.0
+
+# Medical NLP
+spacy==3.7.2
+scispacy==0.5.4
+
+# Optional but recommended for production:
+Flask-Limiter==3.3.1        # Rate limiting
+Flask-Compress==1.13        # Response compression
+gunicorn==21.2.0            # Production WSGI server
+python-dotenv==1.0.0        # Environment variables
+Flask-CORS==4.0.0           # CORS support for API
+
+# Development dependencies:
+pytest==7.4.0               # Testing
+pytest-flask==1.2.0         # Flask testing utilities
+black==23.7.0               # Code formatting
+flake8==6.1.0               # Linting
+
+# After installing requirements, run this command:
+# python -m spacy download en_core_web_sm
+# pip install https://s3-us-west-2.amazonaws.com/ai2-s3-scispacy/releases/v0.5.1/en_core_sci_sm-0.5.1.tar.gz

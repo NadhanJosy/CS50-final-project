@@ -1,0 +1,162 @@
+<!--
+[filename].html - [description]
+
+AI Assistance Disclosure:
+This project was started during Week 6 of CS50 and developed over approximately
+two months. I used AI tools (Claude / Gemini) as a support resource during
+development.
+
+All code was either written by me or reviewed, adapted, and implemented by me.
+
+-->
+{% extends "layout.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block main %}
+<div class="container my-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-lg">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 class="mb-1">{{ user.full_name }}</h3>
+                    <p class="mb-0">@{{ user.username }}</p>
+                </div>
+
+                <div class="profile-body">
+                    <!-- User Information -->
+                    <h5 class="mb-3">
+                        <i class="fas fa-id-card text-primary"></i>
+                        Account Information
+                    </h5>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Email</label>
+                            <p class="mb-0"><strong>{{ user.email }}</strong></p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Role</label>
+                            <p class="mb-0">
+                                <span class="badge bg-primary">{{ user.role|upper }}</span>
+                            </p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Institution</label>
+                            <p class="mb-0"><strong>{{ user.institution or 'Not specified' }}</strong></p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">License Number</label>
+                            <p class="mb-0"><strong>{{ user.license_number or 'Not specified' }}</strong></p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Member Since</label>
+                            <p class="mb-0"><strong>{{ user.created_formatted }}</strong></p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Last Login</label>
+                            <p class="mb-0"><strong>{{ user.last_login_formatted }}</strong></p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Statistics -->
+                    <h5 class="mb-3">
+                        <i class="fas fa-chart-line text-success"></i>
+                        Your Statistics
+                    </h5>
+
+                    <div class="row mb-4">
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </div>
+                                <h2 class="stat-value">{{ stats.total_consultations }}</h2>
+                                <div class="stat-label">Total Consultations</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-card" style="border-left-color: var(--info-color)">
+                                <div class="stat-icon">
+                                    <i class="fas fa-calendar-week"></i>
+                                </div>
+                                <h2 class="stat-value">{{ stats.consultations_this_week }}</h2>
+                                <div class="stat-label">This Week</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-card" style="border-left-color: var(--success-color)">
+                                <div class="stat-icon">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <h2 class="stat-value">
+                                    {{ (stats.total_consultations / ((user.created_at|days_since) + 1))|round(1) }}
+                                </h2>
+                                <div class="stat-label">Avg Per Day</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if top_conditions and top_conditions|length > 0 %}
+                    <hr>
+
+                    <h5 class="mb-3">
+                        <i class="fas fa-list-ol text-warning"></i>
+                        Most Diagnosed Conditions
+                    </h5>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Condition</th>
+                                    <th>Count</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cond in top_conditions %}
+                                <tr>
+                                    <td><span class="badge bg-secondary">{{ loop.index }}</span></td>
+                                    <td><strong>{{ cond.top_diagnosis }}</strong></td>
+                                    <td>{{ cond.count }}</td>
+                                    <td>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar"
+                                                 style="width: {{ (cond.count / stats.total_consultations * 100)|round(1) }}%">
+                                                {{ (cond.count / stats.total_consultations * 100)|round(1) }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+
+                    <hr>
+
+                    <!-- Actions -->
+                    <div class="text-center">
+                        <a href="/history" class="btn btn-primary">
+                            <i class="fas fa-history"></i>
+                            View History
+                        </a>
+                        <a href="/chat" class="btn btn-success">
+                            <i class="fas fa-stethoscope"></i>
+                            New Consultation
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
