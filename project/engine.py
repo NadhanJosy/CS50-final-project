@@ -257,28 +257,79 @@ class DiagnosticEngine:
 
     
 
-def extract_symptoms(self, text: str) -> Dict[str, bool]:
-    """
-    Extract symptoms using medical NER (with fallback to regex)
-    """
-    if not text or not isinstance(text, str):
-        raise ValueError("Text input must be a non-empty string")
 
-    # Import the NER module
-    try:
-        from medical_ner import extract_symptoms_with_ner
 
-        # Use NER system (with fallback)
-        detected = extract_symptoms_with_ner(text, self.symptom_lookup)
+    def extract_symptoms(self, text: str) -> Dict[str, bool]:
+        if not text or not isinstance(text, str):
+            raise ValueError("Text input must be a non-empty string")
+
+        # Step 1: Preprocessing - normalize text
+        text_lower = text.lower().strip()
+
+        # Remove punctuation that interferes with matching
+        import re
+        text_lower = re.sub(r'[,;:]', ' ', text_lower)  # Replace with space
+        text_lower = re.sub(r'\s+', ' ', text_lower)     # Normalize whitespace
+
+        detected = {}
+
+        # Negation words for context analysis
+        negation_words = [
+            'no', 'not', 'denies', 'without', 'absent',
+            'negative', 'negative for', 'ruled out', 'r/o',
+            'never', 'none', 'lack of'
+        ]
+
+        # Step 2: Search for each symptom variant
+        for variant, original in self.symptom_lookup.items():
+            # Look for the variant in text
+            if variant in text_lower:
+                # Check for negation in surrounding context (60 chars before)
+                variant_pos = text_lower.find(variant)
+                start_pos = max(0, variant_pos - self.config.negation_window_chars)
+                context = text_lower[start_pos:variant_pos]
+
+                # Check if any negation word appears in context
+                is_negated = any(
+                    neg_word in context.split()
+                    for neg_word in negation_words
+                )
+
+                if not is_negated:
+                    detected[original] = True
+                    logger.debug(f"✓ Detected: {original} (from '{variant}')")
+                else:
+                    logger.debug(f"✗ Negated: {original} (from '{variant}')")
+
+        # Step 3: Fuzzy matching for close matches (helps with typos)
+        if len(detected) < 3:  # Only do fuzzy if we haven't found much
+            try:
+                from difflib import SequenceMatcher
+
+                words = text_lower.split()
+
+                for variant, original in self.symptom_lookup.items():
+                    if original in detected:
+                        continue  # Already found
+
+                    # Only fuzzy match single-word symptoms
+                    if ' ' not in variant and len(variant) > 4:
+                        for word in words:
+                            if len(word) > 4:
+                                similarity = SequenceMatcher(None, variant, word).ratio()
+                                if similarity > 0.85:  # 85% similar
+                                    detected[original] = True
+                                    logger.debug(f"✓ Fuzzy: {original} ('{word}' ~= '{variant}')")
+                                    break
+            except Exception as e:
+                logger.debug(f"Fuzzy matching skipped: {e}")
 
         logger.info(f"Extracted {len(detected)} symptoms from input")
+
+        if len(detected) == 0:
+            logger.warning(f"NO SYMPTOMS DETECTED in: '{text[:200]}...'")
+
         return detected
-
-    except ImportError as e:
-        logger.error(f"medical_ner module not found: {e}")
-        # Ultimate fallback - use old method
-        return self._extract_symptoms_fallback(text)
-
 
 
     def compute_diagnosis(

@@ -1,8 +1,10 @@
-#### Clinical Decision Support System (CDSS) - CS50 Final Project
+# Clinical Decision Support System (CDSS) - CS50 Final Project
 
-#### Video Demo: [Your YouTube URL here]
+## Video Demo
 
-#### Project Overview
+[https://youtu.be/aMV3yRrnPf4](https://youtu.be/aMV3yRrnPf4)
+
+### Project Overview
 
 For my CS50 final project, I built a Clinical Decision Support System (CDSS) - a web-based diagnostic tool designed to assist
 healthcare professionals in making clinical decisions. The system analyzes patient symptoms and provides a ranked list of potential
@@ -92,30 +94,6 @@ locations as additional evidence.
 
 Design trade-off: I chose to map multiple terms to canonical symptom names rather than trying to understand natural language. This is
 less flexible than NLP but more reliable and faster.
-
-vital_signs.py (Clinical Monitoring)
-
-This module analyzes vital signs and generates real-time alerts for critical abnormalities. I implemented age-adjusted normal ranges
-because vital signs vary significantly by age group - what's normal for an infant is dangerously abnormal for an adult.
-The red flag detection system checks for 12+ life-threatening conditions (severe hypotension, critical hypoxemia, etc.) and provides
-immediate actionable recommendations. I chose to err on the side of sensitivity over specificity - false positives are acceptable,
-but missed critical conditions are not.
-
-I also implemented SIRS criteria (Systemic Inflammatory Response Syndrome) and NEWS score (National Early Warning Score) because
-these are validated, evidence-based tools used in real hospitals.
-risk_scores.py (Clinical Risk Scoring)
-
-This module calculates six validated clinical risk scores: qSOFA (sepsis), NIHSS (stroke), CHA₂DS₂-VASc (atrial fibrillation stroke
-risk), CURB-65 (pneumonia), MELD (liver failure), and GCS (consciousness).
-Why these specific scores? I chose them based on:
-
-Clinical relevance (commonly used in hospitals)
-Published validation studies
-Clear, computable criteria
-Different medical specialties (cardiology, neurology, critical care)
-
-Each score includes the exact formula from medical literature, score interpretation, and evidence-based recommendations. The MELD
-score calculation, for example, follows the exact formula used by UNOS for liver transplant prioritization.
 
 Database (schema.sql, init_db.py)
 

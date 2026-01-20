@@ -1,5 +1,5 @@
 """
-app.py - Main Flask Application for Clinical Decision Support System
+enhanced_mappings.py - Enhanced Medical Symptom and Pattern Mappings
 
 AI Assistance Disclosure:
 This project was started during Week 6 of CS50 and developed over approximately
@@ -89,7 +89,7 @@ MEDICAL_SYNONYMS: Dict[str, str] = {
     'breathlessness': 'breathlessness',
     'shortness of breath': 'breathlessness',
     'short of breath': 'breathlessness',
-    'sob': 'breathlessness',
+    'SOB': 'breathlessness',
     'dyspnea': 'breathlessness',
     'difficulty breathing': 'breathlessness',
     'labored breathing': 'breathlessness',
@@ -539,7 +539,7 @@ MEDICAL_SYNONYMS: Dict[str, str] = {
 }
 
 
-# Location to disease mapping (unchanged, but keeping it)
+# Location to disease mapping 
 LOCATION_DISEASE_MAP: Dict[str, List[str]] = {
     'right lower quadrant': ['Appendicitis', 'Urinary tract infection', 'Pyelonephritis'],
     'rlq': ['Appendicitis', 'Urinary tract infection', 'Pyelonephritis'],
@@ -562,7 +562,7 @@ LOCATION_DISEASE_MAP: Dict[str, List[str]] = {
 }
 
 
-# Clinical patterns (keeping your existing ones)
+# Clinical patterns 
 CRITICAL_PATTERNS: Dict[str, Dict] = {
     'appendicitis_classic': {
         'symptoms': ['abdominal_pain_rlq', 'vomiting', 'loss_of_appetite'],
